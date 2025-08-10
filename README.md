@@ -1,0 +1,2 @@
+# LicensingServer
+Lizenzserver für QMTool
