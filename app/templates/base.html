@@ -1,0 +1,29 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>License Server</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 24px; }
+    header { margin-bottom: 16px; }
+    nav a { margin-right: 12px; }
+    table { border-collapse: collapse; width: 100%; margin-top: 12px; }
+    th, td { border: 1px solid #ddd; padding: 8px; }
+    th { text-align: left; background: #f4f4f4; }
+    form.inline { display: inline; }
+    .note { color: #888; font-size: 0.9em; }
+  </style>
+</head>
+<body>
+<header>
+  <h1>License Server</h1>
+  <nav>
+    <a href="/">Home</a>
+    <a href="/users">Users</a>
+    <a href="/licenses">Licenses</a>
+    <a href="/activations">Activations</a>
+  </nav>
+</header>
+{% block content %}{% endblock %}
+</body>
+</html>

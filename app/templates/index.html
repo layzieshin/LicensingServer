@@ -1,0 +1,6 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>Welcome</h2>
+<p>Use the navigation above. Admin endpoints require an <b>Authorization: Bearer &lt;ADMIN_TOKEN&gt;</b> header.</p>
+<p class="note">Public key (Base64 / Ed25519): <code>{{ public_key_b64 }}</code></p>
+{% endblock %}

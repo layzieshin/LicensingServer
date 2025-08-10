@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>Licenses</h2>
+<form action="/licenses/create" method="post">
+  <div>User:
+    <select name="user_id" required>
+      {% for u in users %}
+      <option value="{{ u.id }}">{{ u.id }} — {{ u.name }}</option>
+      {% endfor %}
+    </select>
+  </div>
+  <div>Module tag: <input name="module_tag" placeholder="e.g., clockwork-pro" required></div>
+  <div>Max version (optional): <input name="max_version" placeholder="e.g., 1.x"></div>
+  <div>Expires (optional): <input name="expires" placeholder="YYYY-MM-DD"></div>
+  <div>Seats: <input type="number" name="seats" min="1" max="999" value="1" required></div>
+  <div><button type="submit">Assign</button></div>
+</form>
+
+<table>
+  <tr><th>ID</th><th>User</th><th>Module</th><th>Max Ver</th><th>Expires</th><th>Seats</th><th>Actions</th></tr>
+  {% for l in items %}
+  <tr>
+    <td>{{ l.id }}</td>
+    <td>{{ l.user_id }}</td>
+    <td>{{ l.module_tag }}</td>
+    <td>{{ l.max_version or "-" }}</td>
+    <td>{{ l.expires or "-" }}</td>
+    <td>{{ l.seats }}</td>
+    <td>
+      <form class="inline" action="/licenses/delete" method="post">
+        <input type="hidden" name="id" value="{{ l.id }}">
+        <button type="submit">Delete</button>
+      </form>
+    </td>
+  </tr>
+  {% endfor %}
+</table>
+{% endblock %}

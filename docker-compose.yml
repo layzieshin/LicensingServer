@@ -1,0 +1,12 @@
+version: "3.9"
+services:
+  license-server:
+    build: .
+    container_name: license-server
+    env_file:
+      - .env
+    ports:
+      - "${PORT:-8080}:8080"
+    volumes:
+      - ./data:/srv/data
+    restart: unless-stopped
