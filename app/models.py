@@ -54,3 +54,12 @@ class Activation(Base):
     last_seen: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)
 
     license: Mapped["License"] = relationship(back_populates="activations")
+
+class AuditLog(Base):
+    __tablename__ = "audit_logs"
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+    created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow, index=True)
+    actor: Mapped[str] = mapped_column(String(120))           # "api:<ip>" oder admin username
+    action: Mapped[str] = mapped_column(String(80))           # z.B. "login_ok", "license_create", "verify_ok"
+    detail: Mapped[str] = mapped_column(String(2000), default="")
