@@ -1,65 +1,46 @@
-"""
-SQLAlchemy models: AdminUser, License, Activation
-"""
-
 from __future__ import annotations
-from datetime import datetime
-from sqlalchemy import String, Integer, DateTime, Boolean, ForeignKey, UniqueConstraint
-from sqlalchemy.orm import Mapped, mapped_column, relationship
+from datetime import datetime, timedelta
+from typing import Optional
+from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
+from sqlalchemy import Integer, String, DateTime, Boolean, Text
 
-from app.db import Base
+
+class Base(DeclarativeBase):
+    pass
 
 
 class AdminUser(Base):
     __tablename__ = "admin_users"
 
-    id: Mapped[int] = mapped_column(primary_key=True)
-    username: Mapped[str] = mapped_column(String(80), unique=True, index=True)
-    password_hash: Mapped[str] = mapped_column(String(255))
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
+    username: Mapped[str] = mapped_column(String(128), unique=True, index=True, nullable=False)
+    password_hash: Mapped[str] = mapped_column(String(255), nullable=False)
+    created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow, nullable=False)
 
 
 class License(Base):
     __tablename__ = "licenses"
 
-    id: Mapped[int] = mapped_column(primary_key=True)
-    license_key: Mapped[str] = mapped_column(String(128), unique=True, index=True)
-
-    # who / what
-    user_name: Mapped[str] = mapped_column(String(120))
-    user_email: Mapped[str] = mapped_column(String(200))
-    module_name: Mapped[str] = mapped_column(String(120), index=True)
-
-    # policy
-    max_machines: Mapped[int] = mapped_column(Integer, default=2)
-    expires_at: Mapped[datetime | None] = mapped_column(DateTime, nullable=True)
-    revoked: Mapped[bool] = mapped_column(Boolean, default=False)
-
-    created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)
-
-    activations: Mapped[list["Activation"]] = relationship(
-        back_populates="license", cascade="all, delete-orphan"
-    )
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
+    product: Mapped[str] = mapped_column(String(128), index=True, nullable=False)
+    customer_email: Mapped[Optional[str]] = mapped_column(String(320), nullable=True)
+    key: Mapped[str] = mapped_column(String(256), unique=True, index=True, nullable=False)
+    valid_from: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow, nullable=False)
+    expires_at: Mapped[Optional[datetime]] = mapped_column(DateTime, nullable=True)
+    notes: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
+    created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow, nullable=False)
+    active: Mapped[bool] = mapped_column(Boolean, default=True, nullable=False)
 
 
 class Activation(Base):
     __tablename__ = "activations"
-    __table_args__ = (
-        UniqueConstraint("license_id", "machine_fingerprint", name="uq_license_machine"),
-    )
 
-    id: Mapped[int] = mapped_column(primary_key=True)
-    license_id: Mapped[int] = mapped_column(ForeignKey("licenses.id", ondelete="CASCADE"), index=True)
-    machine_fingerprint: Mapped[str] = mapped_column(String(64), index=True)
-    activated_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)
-    last_seen: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
+    license_id: Mapped[int] = mapped_column(Integer, index=True, nullable=False)
+    fingerprint: Mapped[str] = mapped_column(String(256), nullable=False)
+    created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow, nullable=False)
+    valid_until: Mapped[Optional[datetime]] = mapped_column(DateTime, nullable=True)
 
-    license: Mapped["License"] = relationship(back_populates="activations")
-
-class AuditLog(Base):
-    __tablename__ = "audit_logs"
-
-    id: Mapped[int] = mapped_column(primary_key=True)
-    created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow, index=True)
-    actor: Mapped[str] = mapped_column(String(120))           # "api:<ip>" oder admin username
-    action: Mapped[str] = mapped_column(String(80))           # z.B. "login_ok", "license_create", "verify_ok"
-    detail: Mapped[str] = mapped_column(String(2000), default="")
+    @staticmethod
+    def compute_default_valid_until(ttl_days: int) -> datetime:
+        return datetime.utcnow() + timedelta(days=ttl_days)

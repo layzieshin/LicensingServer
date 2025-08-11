@@ -1,47 +1,28 @@
-"""
-Database bootstrap: engine, session, Base + init_db()
-"""
-
 from __future__ import annotations
-import os
-from pathlib import Path
-from contextlib import contextmanager
 
+import os
+from contextlib import contextmanager
 from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker, DeclarativeBase
+from sqlalchemy.orm import sessionmaker
+
+from app.models import Base
 
 DATABASE_URL = os.getenv("DATABASE_URL", "sqlite:////srv/data/db/license.db")
 
-
-class Base(DeclarativeBase):
-    """SQLAlchemy declarative base."""
-
-
-# sqlite pragmas
+# sqlite pragmas + thread-safety for uvicorn workers
 engine = create_engine(
     DATABASE_URL,
     connect_args={"check_same_thread": False} if DATABASE_URL.startswith("sqlite") else {},
     future=True,
+    pool_pre_ping=True,
 )
-SessionLocal = sessionmaker(bind=engine, autoflush=False, autocommit=False, future=True)
 
-
-def _ensure_dirs() -> None:
-    """Create /srv/data/db if missing."""
-    if DATABASE_URL.startswith("sqlite:////"):
-        db_file = DATABASE_URL.replace("sqlite:////", "/")
-        Path(db_file).parent.mkdir(parents=True, exist_ok=True)
+# crucial: expire_on_commit=False stops objects from detaching immediately
+SessionLocal = sessionmaker(bind=engine, autoflush=False, autocommit=False, expire_on_commit=False, future=True)
 
 
 def init_db() -> None:
-    """Create tables and initial admin if needed."""
-    from app.models import AdminUser  # noqa: WPS433
-    from app.security import password_context, ensure_keys_exist, ensure_initial_admin  # noqa: WPS433
-
-    _ensure_dirs()
     Base.metadata.create_all(bind=engine)
-    ensure_keys_exist()
-    ensure_initial_admin(password_context)
 
 
 @contextmanager

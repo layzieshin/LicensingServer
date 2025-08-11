@@ -1,24 +1,29 @@
-"""
-Admin FastAPI app (port 3080): session login + HTML GUI.
-"""
-
 from __future__ import annotations
+
 import os
 from fastapi import FastAPI
 from fastapi.staticfiles import StaticFiles
 from starlette.middleware.sessions import SessionMiddleware
+
 from app.db import init_db
+from app.security import ensure_initial_admin
 from app.admin_routes import router as admin_router
 
 init_db()
+ensure_initial_admin()
 
-app = FastAPI(title="License Admin", version="1.0")
+app = FastAPI(title="Licensing Admin", version="1.0")
 
-# Session for login
-app.add_middleware(SessionMiddleware, secret_key=os.getenv("SESSION_SECRET", "change-me"))
+# sessions for login
+app.add_middleware(
+    SessionMiddleware,
+    secret_key=os.getenv("ADMIN_SESSION_SECRET", "change-me"),
+    max_age=60 * 60 * 8,  # 8h
+    same_site="lax",
+)
 
-# Mount static assets
+# static + templates assumed at app/static and app/templates
 app.mount("/static", StaticFiles(directory="app/static"), name="static")
 
-# Admin routes (HTML)
+# routes
 app.include_router(admin_router)

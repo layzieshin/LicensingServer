@@ -1,23 +1,26 @@
 services:
   license-admin:
-    build: .
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.admin
     container_name: license-admin
     env_file:
       - .env
+    ports:
+      - "3080:3080"
     volumes:
       - ./data:/srv/data
-    ports:
-      - "${PORT_ADMIN:-3080}:3080"
     restart: unless-stopped
 
   license-api:
-    build: .
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.api
     container_name: license-api
     env_file:
       - .env
-    command: ["uvicorn", "app.main_api:app", "--host=0.0.0.0", "--port=3445"]
+    ports:
+      - "3445:3445"
     volumes:
       - ./data:/srv/data
-    ports:
-      - "${PORT_API:-3445}:3445"
     restart: unless-stopped

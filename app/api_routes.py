@@ -1,63 +1,89 @@
 from __future__ import annotations
-from datetime import datetime
-from fastapi import APIRouter, HTTPException, Depends, Request
+
+import os
+from datetime import datetime, timedelta
+from typing import Optional
+
+from fastapi import APIRouter, HTTPException
+from pydantic import BaseModel, EmailStr
+
 from app.db import session_scope
 from app.models import License, Activation
-from app.schemas import LicenseVerifyRequest, LicenseVerifyResponse
-from app.security import get_public_key_b64, sign_bytes
-from app.ratelimit import rate_limit
-from app.audit import log_audit
 
-router = APIRouter()
+router = APIRouter(prefix="/api/v1")
 
-@router.get("/public-key", response_model=dict)
-def public_key(request: Request, _rl=Depends(rate_limit(30, 60))):
-    ip = request.client.host if request.client else "unknown"
-    log_audit(actor=f"api:{ip}", action="public_key")
-    return {"public_key_b64": get_public_key_b64()}
+
+class LicenseCreate(BaseModel):
+    product: str
+    customer_email: Optional[EmailStr] = None
+    key: str
+    expires_at: Optional[datetime] = None
+    notes: Optional[str] = None
+
+
+class LicenseVerifyRequest(BaseModel):
+    product: str
+    key: str
+    fingerprint: str
+
+
+class LicenseVerifyResponse(BaseModel):
+    valid: bool
+    reason: Optional[str] = None
+    valid_until: Optional[datetime] = None
+
+
+@router.post("/licenses")
+def create_license(payload: LicenseCreate):
+    with session_scope() as db:
+        if db.query(License).filter(License.key == payload.key).first():
+            raise HTTPException(status_code=400, detail="License key already exists")
+
+        lic = License(
+            product=payload.product,
+            customer_email=payload.customer_email,
+            key=payload.key,
+            expires_at=payload.expires_at,
+            notes=payload.notes,
+        )
+        db.add(lic)
+        db.flush()
+        return {"id": lic.id}
+
 
 @router.post("/verify", response_model=LicenseVerifyResponse)
-def verify(req: LicenseVerifyRequest, request: Request, _rl=Depends(rate_limit(60, 60))) -> LicenseVerifyResponse:
-    ip = request.client.host if request.client else "unknown"
+def verify(payload: LicenseVerifyRequest):
+    ttl_days = int(os.getenv("ACTIVATION_TTL_DAYS", "7"))
+
     with session_scope() as db:
         lic = db.query(License).filter(
-            License.license_key == req.license_key,
-            License.module_name == req.module_name
+            License.product == payload.product,
+            License.key == payload.key,
+            License.active.is_(True),
         ).first()
 
         if not lic:
-            log_audit(actor=f"api:{ip}", action="verify_not_found", detail=req.dict())
-            raise HTTPException(status_code=404, detail="License not found")
-
-        if lic.revoked:
-            log_audit(actor=f"api:{ip}", action="verify_revoked", detail={"key": lic.license_key, "fp": req.machine_fingerprint})
-            return LicenseVerifyResponse(status="denied", reason="revoked", public_key_b64=get_public_key_b64())
+            return LicenseVerifyResponse(valid=False, reason="not_found")
 
         if lic.expires_at and lic.expires_at < datetime.utcnow():
-            log_audit(actor=f"api:{ip}", action="verify_expired", detail={"key": lic.license_key, "fp": req.machine_fingerprint})
-            return LicenseVerifyResponse(status="denied", reason="expired", public_key_b64=get_public_key_b64())
+            return LicenseVerifyResponse(valid=False, reason="license_expired")
 
         act = db.query(Activation).filter(
             Activation.license_id == lic.id,
-            Activation.machine_fingerprint == req.machine_fingerprint
+            Activation.fingerprint == payload.fingerprint
         ).first()
 
+        valid_until = None
         if not act:
-            count = db.query(Activation).filter(Activation.license_id == lic.id).count()
-            if count >= lic.max_machines:
-                log_audit(actor=f"api:{ip}", action="verify_limit_exceeded", detail={"key": lic.license_key, "count": count})
-                return LicenseVerifyResponse(status="denied", reason="limit_exceeded", public_key_b64=get_public_key_b64())
-            act = Activation(license_id=lic.id, machine_fingerprint=req.machine_fingerprint)
+            # first activation for this fingerprint
+            act = Activation(
+                license_id=lic.id,
+                fingerprint=payload.fingerprint,
+                valid_until=Activation.compute_default_valid_until(ttl_days),
+            )
             db.add(act)
+            valid_until = act.valid_until
         else:
-            act.last_seen = datetime.utcnow()
+            valid_until = act.valid_until or Activation.compute_default_valid_until(ttl_days)
 
-        payload = f"{lic.license_key}|{req.machine_fingerprint}|OK".encode("utf-8")
-        sig_b64 = sign_bytes(payload)
-        log_audit(actor=f"api:{ip}", action="verify_ok", detail={"key": lic.license_key, "fp": req.machine_fingerprint})
-
-        return LicenseVerifyResponse(
-            status="ok",
-            signature_b64=sig_b64,
-            public_key_b64=get_public_key_b64(),
-        )
+        return LicenseVerifyResponse(valid=True, valid_until=valid_until)
