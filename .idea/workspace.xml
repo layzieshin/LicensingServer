@@ -4,12 +4,8 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="882f5b82-b98e-43e9-b467-5e8d98a2b7fd" name="Changes" comment="20250811_V2.3 requirements.txt updated">
-      <change afterPath="$PROJECT_DIR$/docker/Dockerfile.api" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Dockerfile" beforeDir="false" afterPath="$PROJECT_DIR$/docker/Dockerfile.admin" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/docker-compose.yml" beforeDir="false" afterPath="$PROJECT_DIR$/docker-compose.yml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/requirements.txt" beforeDir="false" afterPath="$PROJECT_DIR$/requirements.txt" afterDir="false" />
+    <list default="true" id="882f5b82-b98e-43e9-b467-5e8d98a2b7fd" name="Changes" comment="20250811_V2.4 grand rewrite">
+      <change afterPath="$PROJECT_DIR$/docker/entrypoint.sh" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -61,12 +57,13 @@
     "SHARE_PROJECT_CONFIGURATION_FILES": "true",
     "git-widget-placeholder": "master",
     "ignore.virus.scanning.warn.message": "true",
-    "last_opened_file_path": "C:/Users/nebul/Nextcloud/Projekte/LicensingServer/docker",
+    "last_opened_file_path": "C:/Users/nebul/Nextcloud/Projekte/LicensingServer",
     "settings.editor.selected.configurable": "preferences.fileTypes"
   }
 }]]></component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\Users\nebul\Nextcloud\Projekte\LicensingServer" />
       <recent name="C:\Users\nebul\Nextcloud\Projekte\LicensingServer\docker" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
@@ -129,7 +126,15 @@
       <option name="project" value="LOCAL" />
       <updated>1754947535504</updated>
     </task>
-    <option name="localTasksCounter" value="6" />
+    <task id="LOCAL-00006" summary="20250811_V2.4 grand rewrite">
+      <option name="closed" value="true" />
+      <created>1754949377496</created>
+      <option name="number" value="00006" />
+      <option name="presentableId" value="LOCAL-00006" />
+      <option name="project" value="LOCAL" />
+      <updated>1754949377496</updated>
+    </task>
+    <option name="localTasksCounter" value="7" />
     <servers />
   </component>
   <component name="VcsManagerConfiguration">
@@ -137,6 +142,7 @@
     <MESSAGE value="20250811_new version" />
     <MESSAGE value="20250811_V2.2" />
     <MESSAGE value="20250811_V2.3 requirements.txt updated" />
-    <option name="LAST_COMMIT_MESSAGE" value="20250811_V2.3 requirements.txt updated" />
+    <MESSAGE value="20250811_V2.4 grand rewrite" />
+    <option name="LAST_COMMIT_MESSAGE" value="20250811_V2.4 grand rewrite" />
   </component>
 </project>

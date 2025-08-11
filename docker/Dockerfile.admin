@@ -5,19 +5,18 @@ ENV PYTHONDONTWRITEBYTECODE=1 \
 
 WORKDIR /srv
 
-# System deps (keep slim & fast)
 RUN apt-get update && apt-get install -y --no-install-recommends \
     && rm -rf /var/lib/apt/lists/*
 
-# Python deps
 COPY requirements-admin.txt .
 RUN pip install --no-cache-dir -r requirements-admin.txt
 
 # App
 COPY app ./app
 
-# Make sure data paths exist
-RUN mkdir -p /srv/data/db /srv/data/keys
+# Entrypoint, der die DB-Ordner im Bind-Mount anlegt
+COPY docker/entrypoint.sh /entrypoint.sh
+RUN chmod +x /entrypoint.sh
 
 ENV PORT=3080 \
     DATABASE_URL=sqlite:////srv/data/db/license.db \
@@ -27,4 +26,5 @@ ENV PORT=3080 \
 
 EXPOSE 3080
 
+ENTRYPOINT ["/entrypoint.sh"]
 CMD ["uvicorn", "app.main_admin:app", "--host=0.0.0.0", "--port=3080"]
