@@ -4,8 +4,20 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="882f5b82-b98e-43e9-b467-5e8d98a2b7fd" name="Changes" comment="20250811_V2.4 grand rewrite">
-      <change afterPath="$PROJECT_DIR$/docker/entrypoint.sh" afterDir="false" />
+    <list default="true" id="882f5b82-b98e-43e9-b467-5e8d98a2b7fd" name="Changes" comment="20250811_V2.5 grand rewrite Fehlerbehebung">
+      <change afterPath="$PROJECT_DIR$/docker/entrypoint-admin.sh" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/docker/entrypoint-api.sh" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/admin_routes.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/admin_routes.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/db.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/db.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/main_admin.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/main_admin.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/security.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/security.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/docker-compose.yml" beforeDir="false" afterPath="$PROJECT_DIR$/docker-compose.yml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/docker/Dockerfile.admin" beforeDir="false" afterPath="$PROJECT_DIR$/docker/Dockerfile.admin" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/docker/Dockerfile.api" beforeDir="false" afterPath="$PROJECT_DIR$/docker/Dockerfile.api" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/docker/entrypoint.sh" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/requirements-admin.txt" beforeDir="false" afterPath="$PROJECT_DIR$/requirements-admin.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/requirements-api.txt" beforeDir="false" afterPath="$PROJECT_DIR$/requirements-api.txt" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -134,7 +146,15 @@
       <option name="project" value="LOCAL" />
       <updated>1754949377496</updated>
     </task>
-    <option name="localTasksCounter" value="7" />
+    <task id="LOCAL-00007" summary="20250811_V2.5 grand rewrite Fehlerbehebung">
+      <option name="closed" value="true" />
+      <created>1754949961619</created>
+      <option name="number" value="00007" />
+      <option name="presentableId" value="LOCAL-00007" />
+      <option name="project" value="LOCAL" />
+      <updated>1754949961619</updated>
+    </task>
+    <option name="localTasksCounter" value="8" />
     <servers />
   </component>
   <component name="VcsManagerConfiguration">
@@ -143,6 +163,7 @@
     <MESSAGE value="20250811_V2.2" />
     <MESSAGE value="20250811_V2.3 requirements.txt updated" />
     <MESSAGE value="20250811_V2.4 grand rewrite" />
-    <option name="LAST_COMMIT_MESSAGE" value="20250811_V2.4 grand rewrite" />
+    <MESSAGE value="20250811_V2.5 grand rewrite Fehlerbehebung" />
+    <option name="LAST_COMMIT_MESSAGE" value="20250811_V2.5 grand rewrite Fehlerbehebung" />
   </component>
 </project>

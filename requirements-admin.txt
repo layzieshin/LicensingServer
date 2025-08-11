@@ -1,11 +1,20 @@
-fastapi==0.115.0
-uvicorn[standard]==0.30.6
-Jinja2==3.1.4
-python-multipart==0.0.9
+# Web
+fastapi>=0.110,<0.114
+uvicorn[standard]>=0.24,<0.31
+jinja2>=3.1
+python-multipart>=0.0.9
 
-SQLAlchemy==2.0.31
+# DB
+SQLAlchemy>=2.0,<2.1
 
-passlib[bcrypt]==1.7.4
+# Auth / Security
+passlib>=1.7.4
+# Fix für "AttributeError: module 'bcrypt' has no attribute '__about__'"
 bcrypt==4.0.1
-itsdangerous==2.2.0
-email-validator==2.2.0
+itsdangerous>=2.1
+
+# Pydantic v2 (FastAPI >=0.110 setzt auf Pydantic 2)
+pydantic>=2.7,<3
+
+# Sonstiges
+typing-extensions>=4.8

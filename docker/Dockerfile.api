@@ -1,26 +1,23 @@
-FROM python:3.13-slim
+FROM python:3.12-slim
 
 ENV PYTHONDONTWRITEBYTECODE=1 \
-    PYTHONUNBUFFERED=1
-
-WORKDIR /srv
+    PYTHONUNBUFFERED=1 \
+    PIP_NO_CACHE_DIR=1
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
+    build-essential libffi-dev \
     && rm -rf /var/lib/apt/lists/*
 
-COPY requirements-api.txt .
-RUN pip install --no-cache-dir -r requirements-api.txt
+WORKDIR /srv/app
 
-COPY app ./app
+COPY requirements-api.txt /tmp/requirements.txt
+RUN pip install --upgrade pip \
+    && pip install -r /tmp/requirements.txt
 
-COPY docker/entrypoint.sh /entrypoint.sh
+COPY app/ /srv/app/
+
+COPY entrypoint-api.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh
 
-ENV PORT=3445 \
-    DATABASE_URL=sqlite:////srv/data/db/license.db \
-    ACTIVATION_TTL_DAYS=7
-
 EXPOSE 3445
-
-ENTRYPOINT ["/entrypoint.sh"]
-CMD ["uvicorn", "app.main_api:app", "--host=0.0.0.0", "--port=3445"]
+CMD ["/entrypoint.sh"]

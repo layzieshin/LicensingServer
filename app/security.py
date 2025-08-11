@@ -2,42 +2,42 @@ from __future__ import annotations
 
 import os
 from typing import Optional
+
 from passlib.context import CryptContext
 from sqlalchemy import select
 
-from app.db import session_scope
-from app.models import AdminUser
+from db import session_scope
+from models import AdminUser
 
-# bcrypt pinned via requirements to avoid 'trapped version' warning
-password_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
-
-
-def hash_password(password: str) -> str:
-    return password_context.hash(password)
+# Passlib-Kontext – bcrypt ist per requirements auf 4.0.1 gepinnt
+pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 
-def verify_password(password: str, password_hash: str) -> bool:
-    return password_context.verify(password, password_hash)
+def verify_password(plain_password: str, password_hash: str) -> bool:
+    return pwd_context.verify(plain_password, password_hash)
 
 
-def get_admin_by_username(db, username: str) -> Optional[AdminUser]:
-    return db.execute(select(AdminUser).where(AdminUser.username == username)).scalars().first()
+def hash_password(plain_password: str) -> str:
+    return pwd_context.hash(plain_password)
 
 
-def create_admin(db, username: str, password: str) -> AdminUser:
-    user = AdminUser(username=username, password_hash=hash_password(password))
-    db.add(user)
-    db.flush()
-    return user
-
-
-def ensure_initial_admin() -> None:
-    """Create the initial admin user if not present. Idempotent."""
-    username = os.getenv("INITIAL_ADMIN_USERNAME", "admin")
-    password = os.getenv("INITIAL_ADMIN_PASSWORD", "admin")
+def ensure_initial_admin(context: Optional[CryptContext] = None) -> None:
+    """
+    Idempotent: legt einen 'admin' an, wenn keiner existiert.
+    Nutzt ENV ADMIN_USERNAME / ADMIN_PASSWORD (Fallback 'admin'/'admin').
+    """
+    ctx = context or pwd_context
+    default_user = os.getenv("ADMIN_USERNAME", "admin")
+    default_pass = os.getenv("ADMIN_PASSWORD", "admin")
 
     with session_scope() as db:
-        existing = get_admin_by_username(db, username)
-        if existing:
+        exists = db.execute(
+            select(AdminUser).where(AdminUser.username == default_user)
+        ).scalar_one_or_none()
+
+        if exists:
             return
-        create_admin(db, username, password)
+
+        user = AdminUser(username=default_user, password_hash=ctx.hash(default_pass))
+        db.add(user)
+        # commit folgt im session_scope() nur, wenn es Änderungen gab

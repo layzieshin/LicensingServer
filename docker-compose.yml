@@ -2,25 +2,47 @@ services:
   license-admin:
     build:
       context: .
-      dockerfile: docker/Dockerfile.admin
+      dockerfile: Dockerfile.admin
     container_name: license-admin
-    env_file:
-      - .env
+    environment:
+      # Rolle nur für Defaults im db.py (Dateiname) – kann man lassen
+      - APP_ROLE=admin
+      # SQLite DSN (Pfad muss schreibbar sein)
+      - DATABASE_URL=sqlite:////data/admin.db
+      # FastAPI/Session Secret
+      - SECRET_KEY=${SECRET_KEY:-please-change-me}
+      # Optional: Log-Level
+      - LOG_LEVEL=info
+    volumes:
+      # persistente DB
+      - ./data/admin:/data
     ports:
       - "3080:3080"
-    volumes:
-      - ./data:/srv/data
     restart: unless-stopped
+    # wartet bis Volume gemountet ist
+    depends_on: []
+    # für problemlosen Schreibzugriff
+    user: "1000:1000"
 
   license-api:
     build:
       context: .
-      dockerfile: docker/Dockerfile.api
+      dockerfile: Dockerfile.api
     container_name: license-api
-    env_file:
-      - .env
+    environment:
+      - APP_ROLE=api
+      - DATABASE_URL=sqlite:////data/api.db
+      - SECRET_KEY=${SECRET_KEY:-please-change-me-too}
+      - LOG_LEVEL=info
+    volumes:
+      - ./data/api:/data
     ports:
       - "3445:3445"
-    volumes:
-      - ./data:/srv/data
     restart: unless-stopped
+    depends_on: []
+    user: "1000:1000"
+
+# Optionale, aber sinnvolle benannte Volumes, wenn du keine Host-Ordner nutzen willst:
+# volumes:
+#   admin_data:
+#   api_data:
