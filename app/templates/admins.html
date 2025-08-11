@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% block content %}
+  <section class="card">
+    <h2>Admins</h2>
+    {% if error %}<div class="alert">{{ error }}</div>{% endif %}
+    <table class="table">
+      <thead><tr><th>Username</th><th>Actions</th></tr></thead>
+      <tbody>
+        {% for a in admins %}
+        <tr>
+          <td>{{ a.username }}</td>
+          <td>
+            <form method="post" action="/admins/delete" onsubmit="return confirm('Delete {{a.username}}?');">
+              <input type="hidden" name="username" value="{{ a.username }}"/>
+              <button type="submit">Delete</button>
+            </form>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </section>
+
+  <section class="card">
+    <h3>New Admin</h3>
+    <form method="post" action="/admins/new" class="row">
+      <input name="username" placeholder="username" required/>
+      <input type="password" name="password" placeholder="password" required/>
+      <button type="submit">Add</button>
+    </form>
+  </section>
+{% endblock %}

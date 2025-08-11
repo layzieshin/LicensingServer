@@ -5,25 +5,30 @@ ENV PYTHONDONTWRITEBYTECODE=1 \
 
 WORKDIR /srv
 
-# System deps (optional: add build-essential if needed)
+# System deps (minimal)
 RUN apt-get update && apt-get install -y --no-install-recommends \
     && rm -rf /var/lib/apt/lists/*
 
 # Python deps
-RUN pip install --no-cache-dir fastapi uvicorn[standard] sqlalchemy pydantic jinja2 cryptography python-multipart
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
 
 # Copy app
 COPY app ./app
 
-# Create data dirs (mounted via volume in compose)
+# Ensure data dirs (will also be mounted by compose)
 RUN mkdir -p /srv/data/keys /srv/data/db
 
-# Default env
-ENV PORT=8080 \
-    ADMIN_TOKEN=change-me-admin-token \
+# Default env (can be overridden by .env / compose)
+ENV PORT_ADMIN=3080 \
+    PORT_API=3445 \
     DATABASE_URL=sqlite:////srv/data/db/license.db \
-    ACTIVATION_TTL_DAYS=7
+    SESSION_SECRET=change-me-session-secret \
+    INITIAL_ADMIN_USER=admin \
+    INITIAL_ADMIN_PASSWORD=ChangeMe123! \
+    LICENSE_DEFAULT_MAX_MACHINES=2
 
-EXPOSE 8080
+EXPOSE 3080 3445
 
-CMD ["uvicorn", "app.main:app", "--host=0.0.0.0", "--port=8080"]
+# Default command runs the admin app; API container overrides via compose
+CMD ["uvicorn", "app.main_admin:app", "--host=0.0.0.0", "--port=3080"]

@@ -1,12 +1,23 @@
-version: "3.9"
 services:
-  license-server:
+  license-admin:
     build: .
-    container_name: license-server
+    container_name: license-admin
     env_file:
       - .env
-    ports:
-      - "${PORT:-8080}:8080"
     volumes:
       - ./data:/srv/data
+    ports:
+      - "${PORT_ADMIN:-3080}:3080"
+    restart: unless-stopped
+
+  license-api:
+    build: .
+    container_name: license-api
+    env_file:
+      - .env
+    command: ["uvicorn", "app.main_api:app", "--host=0.0.0.0", "--port=3445"]
+    volumes:
+      - ./data:/srv/data
+    ports:
+      - "${PORT_API:-3445}:3445"
     restart: unless-stopped

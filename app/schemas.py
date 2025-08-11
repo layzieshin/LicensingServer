@@ -1,39 +1,28 @@
+"""
+Pydantic DTOs for API/Admin forms.
+"""
+
 from __future__ import annotations
-from pydantic import BaseModel, Field
-from typing import Optional, List
+from datetime import datetime
+from pydantic import BaseModel, EmailStr, Field
 
-# ---- Admin DTOs ----
-
-class UserCreate(BaseModel):
-    id: str
-    name: str
-    email: str
 
 class LicenseCreate(BaseModel):
-    user_id: str
-    module_tag: str
-    max_version: Optional[str] = None
-    expires: Optional[str] = None
-    seats: int = Field(default=1, ge=1, le=999)
+    user_name: str = Field(min_length=1, max_length=120)
+    user_email: EmailStr
+    module_name: str = Field(min_length=1, max_length=120)
+    max_machines: int = Field(ge=1, le=50, default=2)
+    expires_at: datetime | None = None
 
-# ---- API DTOs ----
 
-class ActivateRequest(BaseModel):
-    user_id: str
-    module_tag: str
-    version: str
-    machine_id: str
-    app_instance_id: Optional[str] = None
+class LicenseVerifyRequest(BaseModel):
+    license_key: str
+    module_name: str
+    machine_fingerprint: str
 
-class ActivateResponse(BaseModel):
-    ok: bool
-    token: Optional[str] = None
-    public_key_b64: Optional[str] = None
-    reason: Optional[str] = None
 
-class VerifyRequest(BaseModel):
-    token: str
-
-class VerifyResponse(BaseModel):
-    ok: bool
-    reason: Optional[str] = None
+class LicenseVerifyResponse(BaseModel):
+    status: str
+    reason: str | None = None
+    signature_b64: str | None = None
+    public_key_b64: str | None = None

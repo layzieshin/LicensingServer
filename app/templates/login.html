@@ -1,0 +1,22 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <title>Login – License Admin</title>
+  <link rel="stylesheet" href="/static/style.css"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+</head>
+<body class="center">
+  <form class="card" method="post" action="/login">
+    <h2>Admin Login</h2>
+    {% if error %}<div class="alert">{{ error }}</div>{% endif %}
+    <label>Username
+      <input name="username" autocomplete="username" required/>
+    </label>
+    <label>Password
+      <input type="password" name="password" autocomplete="current-password" required/>
+    </label>
+    <button type="submit">Sign in</button>
+  </form>
+</body>
+</html>

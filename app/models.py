@@ -1,37 +1,56 @@
+"""
+SQLAlchemy models: AdminUser, License, Activation
+"""
+
 from __future__ import annotations
 from datetime import datetime
-from sqlalchemy import Column, Integer, String, Boolean, DateTime, ForeignKey
-from sqlalchemy.orm import relationship
+from sqlalchemy import String, Integer, DateTime, Boolean, ForeignKey, UniqueConstraint
+from sqlalchemy.orm import Mapped, mapped_column, relationship
+
 from app.db import Base
 
-class User(Base):
-    __tablename__ = "users"
-    id = Column(String, primary_key=True)          # e.g. "u-4711" or email
-    name = Column(String, nullable=False)
-    email = Column(String, nullable=False, unique=True)
-    active = Column(Boolean, default=True)
 
-    licenses = relationship("License", back_populates="user", cascade="all, delete-orphan")
+class AdminUser(Base):
+    __tablename__ = "admin_users"
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+    username: Mapped[str] = mapped_column(String(80), unique=True, index=True)
+    password_hash: Mapped[str] = mapped_column(String(255))
+
 
 class License(Base):
     __tablename__ = "licenses"
-    id = Column(Integer, primary_key=True, autoincrement=True)
-    user_id = Column(String, ForeignKey("users.id"), nullable=False)
-    module_tag = Column(String, nullable=False)    # e.g., "clockwork-pro"
-    max_version = Column(String, nullable=True)    # e.g., "1.x"
-    expires = Column(String, nullable=True)        # ISO date string or None
-    seats = Column(Integer, default=1)
 
-    user = relationship("User", back_populates="licenses")
-    activations = relationship("Activation", back_populates="license", cascade="all, delete-orphan")
+    id: Mapped[int] = mapped_column(primary_key=True)
+    license_key: Mapped[str] = mapped_column(String(128), unique=True, index=True)
+
+    # who / what
+    user_name: Mapped[str] = mapped_column(String(120))
+    user_email: Mapped[str] = mapped_column(String(200))
+    module_name: Mapped[str] = mapped_column(String(120), index=True)
+
+    # policy
+    max_machines: Mapped[int] = mapped_column(Integer, default=2)
+    expires_at: Mapped[datetime | None] = mapped_column(DateTime, nullable=True)
+    revoked: Mapped[bool] = mapped_column(Boolean, default=False)
+
+    created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)
+
+    activations: Mapped[list["Activation"]] = relationship(
+        back_populates="license", cascade="all, delete-orphan"
+    )
+
 
 class Activation(Base):
     __tablename__ = "activations"
-    id = Column(Integer, primary_key=True, autoincrement=True)
-    license_id = Column(Integer, ForeignKey("licenses.id"), nullable=False)
-    machine_id = Column(String, nullable=False)       # hash or mac+disk hash
-    app_instance_id = Column(String, nullable=True)   # optional—app session id
-    created_at = Column(DateTime, default=datetime.utcnow)
-    last_seen_at = Column(DateTime, default=datetime.utcnow)
+    __table_args__ = (
+        UniqueConstraint("license_id", "machine_fingerprint", name="uq_license_machine"),
+    )
 
-    license = relationship("License", back_populates="activations")
+    id: Mapped[int] = mapped_column(primary_key=True)
+    license_id: Mapped[int] = mapped_column(ForeignKey("licenses.id", ondelete="CASCADE"), index=True)
+    machine_fingerprint: Mapped[str] = mapped_column(String(64), index=True)
+    activated_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)
+    last_seen: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)
+
+    license: Mapped["License"] = relationship(back_populates="activations")
