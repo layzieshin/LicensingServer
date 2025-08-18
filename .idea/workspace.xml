@@ -4,32 +4,8 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="882f5b82-b98e-43e9-b467-5e8d98a2b7fd" name="Changes" comment="20250811_V2.6">
-      <change afterPath="$PROJECT_DIR$/app/core/config.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/core/database.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/core/security.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/main.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/models/base.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/models/license.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/routers/admin.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/routers/api.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/schemas/activation_schemas.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/schemas/license_schemas.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/services/licensing_service.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/templates/_layout.html" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/templates/index.html" afterDir="false" />
+    <list default="true" id="882f5b82-b98e-43e9-b467-5e8d98a2b7fd" name="Changes" comment="20250818_V1.1">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/admin_routes.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/api_routes.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/audit.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/db.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/main_admin.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/main_api.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/models.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/ratelimit.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/schemas.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/security.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/templating.py" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -175,7 +151,23 @@
       <option name="project" value="LOCAL" />
       <updated>1754952948994</updated>
     </task>
-    <option name="localTasksCounter" value="9" />
+    <task id="LOCAL-00009" summary="20250818_V1.0">
+      <option name="closed" value="true" />
+      <created>1755548339810</created>
+      <option name="number" value="00009" />
+      <option name="presentableId" value="LOCAL-00009" />
+      <option name="project" value="LOCAL" />
+      <updated>1755548339810</updated>
+    </task>
+    <task id="LOCAL-00010" summary="20250818_V1.1">
+      <option name="closed" value="true" />
+      <created>1755548356462</created>
+      <option name="number" value="00010" />
+      <option name="presentableId" value="LOCAL-00010" />
+      <option name="project" value="LOCAL" />
+      <updated>1755548356462</updated>
+    </task>
+    <option name="localTasksCounter" value="11" />
     <servers />
   </component>
   <component name="VcsManagerConfiguration">
@@ -186,6 +178,8 @@
     <MESSAGE value="20250811_V2.4 grand rewrite" />
     <MESSAGE value="20250811_V2.5 grand rewrite Fehlerbehebung" />
     <MESSAGE value="20250811_V2.6" />
-    <option name="LAST_COMMIT_MESSAGE" value="20250811_V2.6" />
+    <MESSAGE value="20250818_V1.0" />
+    <MESSAGE value="20250818_V1.1" />
+    <option name="LAST_COMMIT_MESSAGE" value="20250818_V1.1" />
   </component>
 </project>

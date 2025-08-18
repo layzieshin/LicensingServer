@@ -1,3 +1,4 @@
+# docker/Dockerfile
 # Single Dockerfile for both Admin UI and Public API
 FROM python:3.12-slim
 
@@ -15,7 +16,6 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 # App code
 COPY app ./app
-COPY .env ./.env  # optional at build-time; runtime will mount .env too if needed
 
 # Ensure runtime folders
 RUN mkdir -p data keys

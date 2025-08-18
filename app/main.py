@@ -19,11 +19,15 @@ from app.routers import api as api_router
 
 app = FastAPI(title="QMTool Licensing Server", version="1.0.0")
 
-# CORS for client apps (configure in .env)
+# CORS for client apps
+cors_origins = settings.CORS_ORIGINS
+# Credentials dürfen nicht mit Origin="*" kombiniert werden (CORS-Spezifikation)
+allow_credentials = False if cors_origins == ["*"] else True
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=settings.CORS_ORIGINS,
-    allow_credentials=True,
+    allow_origins=cors_origins,
+    allow_credentials=allow_credentials,
     allow_methods=["*"],
     allow_headers=["*"],
 )
