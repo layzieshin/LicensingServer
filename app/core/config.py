@@ -1,46 +1,20 @@
 """
-Configuration loader for environment-based settings (Pydantic v2 + pydantic-settings),
-hardened against env parsing issues: complex values are ingested as strings first,
-then normalized internally (e.g., CORS_ORIGINS).
+Simplified configuration loader without pydantic-settings.
+Loads environment variables via python-dotenv and normalizes values.
 """
 
+import os
 from functools import lru_cache
 from typing import List
 
-from pydantic import Field, model_validator
-from pydantic_settings import BaseSettings, SettingsConfigDict
+from dotenv import load_dotenv
+from pydantic import BaseModel, Field, field_validator
+
+# Load .env file explicitly
+load_dotenv(dotenv_path=".env")
 
 
-def _parse_cors(origins_raw: str) -> List[str]:
-    """
-    Accepts:
-      - "*" (wildcard) -> ["*"]
-      - CSV: "http://localhost:3000,https://app.example.com"
-      - JSON-like list is ALSO accepted if provided by mistake, e.g. '["http://a","http://b"]'
-        but parsed safely without json.loads to avoid JSON strictness at settings read time.
-    """
-    if origins_raw is None:
-        return ["*"]
-    s = (origins_raw or "").strip()
-    if not s:
-        return ["*"]
-    if s == "*":
-        return ["*"]
-
-    # If looks like a JSON array, strip brackets and split by comma.
-    # (We avoid json.loads to prevent pydantic_settings pre-decode traps.)
-    if s.startswith("[") and s.endswith("]"):
-        s = s[1:-1]
-
-    parts = [p.strip().strip('"').strip("'") for p in s.split(",")]
-    return [p for p in parts if p]
-
-
-class Settings(BaseSettings):
-    # ---------- Raw env (strings only) ----------
-    # Map the env var "CORS_ORIGINS" to a raw string field to avoid JSON parsing by pydantic-settings.
-    CORS_ORIGINS_RAW: str = Field("*", alias="CORS_ORIGINS")
-
+class Settings(BaseModel):
     # ---------- Server ----------
     PORT: int = Field(8000, description="HTTP port for the service")
     ADMIN_TOKEN: str = Field("changeme-admin-token", description="Static admin token for UI access")
@@ -52,26 +26,43 @@ class Settings(BaseSettings):
     # ---------- Licensing ----------
     OFFLINE_TOKEN_TTL_DAYS: int = Field(10, description="Validity period for offline grace tokens")
 
-    # ---------- Derived / normalized ----------
+    # ---------- CORS ----------
     CORS_ORIGINS: List[str] = Field(default_factory=lambda: ["*"])
 
-    model_config = SettingsConfigDict(
-        env_file=".env",
-        case_sensitive=False,
-        extra="ignore",
-        # Important: we use alias for RAW field only; derived fields stay internal.
-    )
+    @field_validator("CORS_ORIGINS", mode="before")
+    @classmethod
+    def parse_cors_origins(cls, v):
+        """
+        Accept:
+        - "*" (wildcard)
+        - CSV: "http://localhost:3000,https://app.example.com"
+        - JSON-like: ["http://a","http://b"]
+        """
+        if v is None:
+            return ["*"]
+        if isinstance(v, list):
+            return v
+        s = str(v).strip()
+        if not s:
+            return ["*"]
+        if s == "*":
+            return ["*"]
+        if s.startswith("[") and s.endswith("]"):
+            s = s[1:-1]
+        return [p.strip().strip('"').strip("'") for p in s.split(",") if p.strip()]
 
-    @model_validator(mode="after")
-    def _normalize(self):
-        # Normalize CORS origins from the raw string
-        self.CORS_ORIGINS = _parse_cors(self.CORS_ORIGINS_RAW)
-        return self
 
-
-@lru_cache()
+@lru_cache
 def get_settings() -> Settings:
-    return Settings()
+    """Load settings from environment variables."""
+    return Settings(
+        PORT=int(os.getenv("PORT", 8000)),
+        ADMIN_TOKEN=os.getenv("ADMIN_TOKEN", "changeme-admin-token"),
+        DB_PATH=os.getenv("DB_PATH", "data/app.db"),
+        KEYS_DIR=os.getenv("KEYS_DIR", "keys"),
+        OFFLINE_TOKEN_TTL_DAYS=int(os.getenv("OFFLINE_TOKEN_TTL_DAYS", 10)),
+        CORS_ORIGINS=os.getenv("CORS_ORIGINS", "*"),
+    )
 
 
 settings = get_settings()
