@@ -1,6 +1,3 @@
-# Compose v2+ automatically uses the latest schema; 'version:' is obsolete
-# See: https://docs.docker.com/compose/  and community note about deprecation warnings
-# Service: one container serving Admin UI and Public API
 services:
   licensing:
     build:

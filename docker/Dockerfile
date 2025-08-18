@@ -1,28 +1,26 @@
-# docker/Dockerfile
-# Single Dockerfile for both Admin UI and Public API
+# Single Dockerfile for Admin UI + Public API
 FROM python:3.12-slim
+
+ENV PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONUNBUFFERED=1
 
 # System deps
 RUN apt-get update && apt-get install -y --no-install-recommends \
-    build-essential tini && \
+    tini && \
     rm -rf /var/lib/apt/lists/*
 
-# Workdir
 WORKDIR /app
 
 # Python deps
-COPY requirements.txt ./
-RUN pip install --no-cache-dir -r requirements.txt
+COPY requirements.txt .
+RUN pip install --no-cache-dir --upgrade pip && \
+    pip install --no-cache-dir -r requirements.txt
 
 # App code
 COPY app ./app
 
-# Ensure runtime folders
-RUN mkdir -p data keys
-
-# Non-root
-RUN useradd -ms /bin/bash appuser
-USER appuser
+# Ensure runtime folders (note: bind mounts may override these)
+RUN mkdir -p /app/data /app/keys
 
 EXPOSE 8000
 
