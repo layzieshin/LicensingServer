@@ -1,0 +1,89 @@
+{% extends "_layout.html" %}
+{% block content %}
+<section class="grid">
+  <div class="card">
+    <h2>Users</h2>
+    <form method="post" action="/users/create" class="row">
+      <input name="email" placeholder="email" required/>
+      <input name="display_name" placeholder="display name" required/>
+      <button type="submit">Add</button>
+    </form>
+    <table>
+      <thead><tr><th>ID</th><th>Email</th><th>Name</th><th></th></tr></thead>
+      <tbody>
+      {% for u in users %}
+      <tr>
+        <td>{{u.id}}</td><td>{{u.email}}</td><td>{{u.display_name}}</td>
+        <td>
+          <form method="post" action="/users/delete/{{u.id}}">
+            <button type="submit" class="danger">Delete</button>
+          </form>
+        </td>
+      </tr>
+      {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+  <div class="card">
+    <h2>Licenses</h2>
+    <form method="post" action="/licenses/create" class="row">
+      <select name="user_id" required>
+        <option value="">User…</option>
+        {% for u in users %}<option value="{{u.id}}">{{u.display_name}} ({{u.email}})</option>{% endfor %}
+      </select>
+      <input name="module_tag" placeholder="module_tag" required/>
+      <input name="seats" placeholder="seats" type="number" min="1" value="1"/>
+      <input name="max_version" placeholder="max_version (optional)"/>
+      <input name="expires_at" placeholder="expires_at ISO (optional)"/>
+      <button type="submit">Add</button>
+    </form>
+    <table>
+      <thead><tr><th>ID</th><th>User</th><th>Module</th><th>Seats</th><th>MaxVer</th><th>Expires</th><th></th></tr></thead>
+      <tbody>
+      {% for l in licenses %}
+      <tr>
+        <td>{{l.id}}</td>
+        <td>{{l.user.display_name}}</td>
+        <td>{{l.module_tag}}</td>
+        <td>{{l.seats}}</td>
+        <td>{{l.max_version or "-"}}</td>
+        <td>{{l.expires_at or "-"}}</td>
+        <td>
+          <form method="post" action="/licenses/delete/{{l.id}}">
+            <button type="submit" class="danger">Delete</button>
+          </form>
+        </td>
+      </tr>
+      {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+  <div class="card">
+    <h2>Activations</h2>
+    <table>
+      <thead><tr><th>ID</th><th>License</th><th>Device</th><th>Host</th><th>Active</th><th>Last Heartbeat</th><th></th></tr></thead>
+      <tbody>
+      {% for a in activations %}
+      <tr>
+        <td>{{a.id}}</td>
+        <td>#{{a.license_id}} / {{a.license.module_tag}}</td>
+        <td>{{a.device_id}}</td>
+        <td>{{a.hostname or "-"}}</td>
+        <td>{{"yes" if a.active else "no"}}</td>
+        <td>{{a.last_heartbeat or "-"}}</td>
+        <td>
+          {% if a.active %}
+          <form method="post" action="/activations/deactivate/{{a.id}}">
+            <button type="submit" class="warn">Deactivate</button>
+          </form>
+          {% endif %}
+        </td>
+      </tr>
+      {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</section>
+{% endblock %}

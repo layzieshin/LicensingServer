@@ -1,16 +1,14 @@
-# QMTool License Server (Minimal)
+# QMTool Licensing Server
 
-Python/FastAPI-based license server for per-user, per-module licensing with device activations.
+Single-service FastAPI app that serves:
+- **Admin UI** (Jinja2 templates) at `/` (protected via `X-Admin-Token`)
+- **Public API** under `/api/v1` for client activation & heartbeat
 
-## Features
-- Users, Licenses (module_tag, seats, optional expiry/max_version)
-- Device Activations with offline grace token (signed via Ed25519)
-- Admin web UI (simple HTML) + API (`/api/v1`)
-- Dockerized; SQLite persistence; keypair stored in volume
-- Env-configurable port, admin token, DB path, token TTL
+## Quickstart
 
-## Quickstart (Docker)
 ```bash
 cp .env.example .env
-# edit .env (ADMIN_TOKEN, PORT, etc.)
+# edit ADMIN_TOKEN and PORT if desired
 docker compose up --build -d
+# open http://localhost:8088 (or your PORT)
+# send header X-Admin-Token: <your token> for UI access

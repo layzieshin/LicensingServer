@@ -1,0 +1,22 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <title>QMTool License Server</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <link href="/static/styles.css" rel="stylesheet"/>
+</head>
+<body>
+<header class="bar">
+  <h1>QMTool Licensing</h1>
+</header>
+
+<main class="container">
+  {% block content %}{% endblock %}
+</main>
+
+<footer class="bar foot">
+  <small>&copy; {{  now().year }} QMTool</small>
+</footer>
+</body>
+</html>

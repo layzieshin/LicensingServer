@@ -1,48 +1,18 @@
+# Compose v2+ automatically uses the latest schema; 'version:' is obsolete
+# See: https://docs.docker.com/compose/  and community note about deprecation warnings
+# Service: one container serving Admin UI and Public API
 services:
-  license-admin:
+  licensing:
     build:
       context: .
-      dockerfile: Dockerfile.admin
-    container_name: license-admin
-    environment:
-      # Rolle nur für Defaults im db.py (Dateiname) – kann man lassen
-      - APP_ROLE=admin
-      # SQLite DSN (Pfad muss schreibbar sein)
-      - DATABASE_URL=sqlite:////data/admin.db
-      # FastAPI/Session Secret
-      - SECRET_KEY=${SECRET_KEY:-please-change-me}
-      # Optional: Log-Level
-      - LOG_LEVEL=info
-    volumes:
-      # persistente DB
-      - ./data/admin:/data
+      dockerfile: docker/Dockerfile
+    container_name: licensing-server
+    env_file:
+      - .env
     ports:
-      - "3080:3080"
-    restart: unless-stopped
-    # wartet bis Volume gemountet ist
-    depends_on: []
-    # für problemlosen Schreibzugriff
-    user: "1000:1000"
-
-  license-api:
-    build:
-      context: .
-      dockerfile: Dockerfile.api
-    container_name: license-api
-    environment:
-      - APP_ROLE=api
-      - DATABASE_URL=sqlite:////data/api.db
-      - SECRET_KEY=${SECRET_KEY:-please-change-me-too}
-      - LOG_LEVEL=info
+      - "${PORT:-8000}:8000"
     volumes:
-      - ./data/api:/data
-    ports:
-      - "3445:3445"
+      - ./data:/app/data
+      - ./keys:/app/keys
+      - ./logs:/app/logs
     restart: unless-stopped
-    depends_on: []
-    user: "1000:1000"
-
-# Optionale, aber sinnvolle benannte Volumes, wenn du keine Host-Ordner nutzen willst:
-# volumes:
-#   admin_data:
-#   api_data:

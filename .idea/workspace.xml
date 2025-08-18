@@ -4,20 +4,32 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="882f5b82-b98e-43e9-b467-5e8d98a2b7fd" name="Changes" comment="20250811_V2.5 grand rewrite Fehlerbehebung">
-      <change afterPath="$PROJECT_DIR$/docker/entrypoint-admin.sh" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/docker/entrypoint-api.sh" afterDir="false" />
+    <list default="true" id="882f5b82-b98e-43e9-b467-5e8d98a2b7fd" name="Changes" comment="20250811_V2.6">
+      <change afterPath="$PROJECT_DIR$/app/core/config.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/core/database.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/core/security.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/main.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/models/base.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/models/license.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/routers/admin.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/routers/api.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/schemas/activation_schemas.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/schemas/license_schemas.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/services/licensing_service.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/templates/_layout.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/templates/index.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/admin_routes.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/admin_routes.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/db.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/db.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/main_admin.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/main_admin.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/security.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/security.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/docker-compose.yml" beforeDir="false" afterPath="$PROJECT_DIR$/docker-compose.yml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/docker/Dockerfile.admin" beforeDir="false" afterPath="$PROJECT_DIR$/docker/Dockerfile.admin" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/docker/Dockerfile.api" beforeDir="false" afterPath="$PROJECT_DIR$/docker/Dockerfile.api" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/docker/entrypoint.sh" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/requirements-admin.txt" beforeDir="false" afterPath="$PROJECT_DIR$/requirements-admin.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/requirements-api.txt" beforeDir="false" afterPath="$PROJECT_DIR$/requirements-api.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/admin_routes.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/api_routes.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/audit.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/db.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/main_admin.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/main_api.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/models.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/ratelimit.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/schemas.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/security.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/templating.py" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -65,6 +77,7 @@
     "ModuleVcsDetector.initialDetectionPerformed": "true",
     "Python.main.executor": "Run",
     "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252": "true",
     "RunOnceActivity.git.unshallow": "true",
     "SHARE_PROJECT_CONFIGURATION_FILES": "true",
     "git-widget-placeholder": "master",
@@ -86,7 +99,7 @@
   <component name="SharedIndexes">
     <attachedChunks>
       <set>
-        <option value="bundled-python-sdk-4c141bd692a7-e2d783800521-com.jetbrains.pycharm.community.sharedIndexes.bundled-PC-251.26927.90" />
+        <option value="bundled-python-sdk-d9fa9deec7cb-d902c0275401-com.jetbrains.pycharm.community.sharedIndexes.bundled-PC-252.23892.515" />
       </set>
     </attachedChunks>
   </component>
@@ -154,7 +167,15 @@
       <option name="project" value="LOCAL" />
       <updated>1754949961619</updated>
     </task>
-    <option name="localTasksCounter" value="8" />
+    <task id="LOCAL-00008" summary="20250811_V2.6">
+      <option name="closed" value="true" />
+      <created>1754952948994</created>
+      <option name="number" value="00008" />
+      <option name="presentableId" value="LOCAL-00008" />
+      <option name="project" value="LOCAL" />
+      <updated>1754952948994</updated>
+    </task>
+    <option name="localTasksCounter" value="9" />
     <servers />
   </component>
   <component name="VcsManagerConfiguration">
@@ -164,6 +185,7 @@
     <MESSAGE value="20250811_V2.3 requirements.txt updated" />
     <MESSAGE value="20250811_V2.4 grand rewrite" />
     <MESSAGE value="20250811_V2.5 grand rewrite Fehlerbehebung" />
-    <option name="LAST_COMMIT_MESSAGE" value="20250811_V2.5 grand rewrite Fehlerbehebung" />
+    <MESSAGE value="20250811_V2.6" />
+    <option name="LAST_COMMIT_MESSAGE" value="20250811_V2.6" />
   </component>
 </project>
