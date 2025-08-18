@@ -3,10 +3,9 @@ services:
     build:
       context: .
       dockerfile: docker/Dockerfile
-    container_name: licensing-server
+    container_name: LicensingService
     env_file:
       - .env
-    # Außen -> Innen: 3080:3080 (außen kann per .env PORT überschrieben werden)
     ports:
       - "${PORT:-3080}:3080"
     volumes:
