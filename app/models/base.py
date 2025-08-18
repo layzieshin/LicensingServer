@@ -1,15 +1,37 @@
-from sqlalchemy import DateTime, func
-from sqlalchemy.orm import Mapped, mapped_column, declarative_mixin
-from app.core.database import Base
+"""
+SQLAlchemy base classes and timestamp mixin.
+
+This module must NOT import any concrete model classes to avoid circular imports.
+"""
+
+from __future__ import annotations
+
+from datetime import datetime
+from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
+from sqlalchemy.sql import func
+from sqlalchemy import DateTime
 
 
-@declarative_mixin
+class Base(DeclarativeBase):
+    """Global declarative base for all ORM models."""
+    pass
+
+
 class TimestampMixin:
-    created_at: Mapped["DateTime"] = mapped_column(DateTime(timezone=True), server_default=func.now())
-    updated_at: Mapped["DateTime"] = mapped_column(DateTime(timezone=True), onupdate=func.now(), nullable=True)
-
-
-# Import concrete models to register with Base metadata
-from app.models.user import User  # noqa
-from app.models.license import License  # noqa
-from app.models.activation import DeviceActivation  # noqa
+    """
+    Adds created_at / updated_at columns with automatic timestamps.
+    Safe to include in any model without extra dependencies.
+    """
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True),
+        server_default=func.now(),
+        nullable=False,
+        index=True,
+    )
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True),
+        server_default=func.now(),
+        onupdate=func.now(),
+        nullable=False,
+        index=True,
+    )
