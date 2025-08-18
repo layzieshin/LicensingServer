@@ -21,7 +21,7 @@ app = FastAPI(title="QMTool Licensing Server", version="1.0.0")
 
 # CORS for client apps
 cors_origins = settings.CORS_ORIGINS
-# Credentials dürfen nicht mit Origin="*" kombiniert werden (CORS-Spezifikation)
+# Credentials dürfen nicht mit Origin="*" kombiniert werden
 allow_credentials = False if cors_origins == ["*"] else True
 
 app.add_middleware(
@@ -39,9 +39,7 @@ templates = Jinja2Templates(directory="app/templates")
 
 @app.on_event("startup")
 def on_startup() -> None:
-    # Create SQLite DB and tables if not present
     init_db()
-    # Ensure Ed25519 keypair exists on disk (for offline grace tokens)
     ensure_keypair_exists()
 
 
@@ -50,7 +48,6 @@ app.include_router(admin_router.router, tags=["admin"])
 app.include_router(api_router.router, prefix="/api/v1", tags=["api"])
 
 
-# Health endpoint
 @app.get("/health")
 def health():
     return {"status": "ok"}
